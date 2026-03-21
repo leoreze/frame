@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.frameapresentacoes.com.br/sitemap.xml
