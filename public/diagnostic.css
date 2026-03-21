@@ -46,9 +46,17 @@ button, input, select, textarea { font: inherit; }
 .brand-lockup span { color: rgba(255,255,255,.7); font-size: .95rem; }
 .aside-copy h1 { font-family: Dosis, sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); line-height: .95; margin: 16px 0; }
 .aside-copy p { color: rgba(255,255,255,.78); line-height: 1.75; }
-.method-list { display: grid; gap: 12px; }
-.method-list article { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid rgba(255,255,255,.08); border-radius: 18px; background: rgba(255,255,255,.04); }
-.method-list b { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: rgba(255,255,255,.14); }
+
+.method-panel { display:grid; gap: 12px; }
+.method-panel-head { display:grid; gap: 4px; }
+.method-panel-head strong { font-size: 1rem; }
+.method-panel-head span { color: rgba(255,255,255,.68); font-size: .92rem; line-height: 1.5; }
+.method-accordion { display:grid; gap: 10px; }
+.method-accordion details { border: 1px solid rgba(255,255,255,.09); border-radius: 18px; background: rgba(255,255,255,.04); overflow: hidden; }
+.method-accordion summary { list-style: none; display:flex; align-items:center; gap: 14px; padding: 14px 16px; cursor:pointer; font-weight: 700; }
+.method-accordion summary::-webkit-details-marker { display:none; }
+.method-accordion summary b { width: 36px; height: 36px; border-radius: 12px; display:grid; place-items:center; background: rgba(255,255,255,.14); flex: 0 0 36px; }
+.method-accordion details p { margin: 0; padding: 0 16px 16px 66px; color: rgba(255,255,255,.74); line-height: 1.65; font-size: .94rem; }
 .wizard-main { padding: 28px; }
 .progress-wrap { margin: 0 auto 18px; width: min(860px, 100%); }
 .progress-bar { height: 10px; border-radius: 999px; background: rgba(0,0,0,.08); overflow: hidden; }
@@ -103,3 +111,23 @@ textarea { min-height: 120px; resize: vertical; }
   .wizard-aside, .progress-wrap, .wizard-card, .result-actions, .cta-band { display: none !important; }
   .result-card { width: 100%; box-shadow: none; border: 0; padding: 0; }
 }
+
+.score-grid-detailed { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.score-card { text-align:left; position: relative; overflow: hidden; }
+.score-card::after { content: ''; position:absolute; inset: auto 0 0 0; height: 4px; background: linear-gradient(90deg, var(--orange), var(--blue)); opacity: .24; }
+.score-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap: 14px; margin-bottom: 12px; }
+.score-card-title strong { display:block; font-size: 1.06rem; }
+.score-card-title span { display:block; color: var(--muted); font-size: .92rem; margin-top: 4px; }
+.score-card-score { text-align:right; }
+.score-card-score b { display:block; font-size: 2rem; color: var(--orange); margin:0; }
+.score-scale { height: 10px; border-radius: 999px; background: rgba(0,0,0,.08); overflow:hidden; margin: 14px 0 10px; }
+.score-scale span { display:block; height:100%; border-radius:999px; background: linear-gradient(90deg, #cf3f3f, #ed761b, #f0b000, #0094d9); }
+.score-meta-row { display:flex; flex-wrap:wrap; gap: 8px; margin-bottom: 12px; }
+.score-chip { display:inline-flex; align-items:center; gap:6px; padding: 6px 10px; border-radius: 999px; font-size: .78rem; font-weight: 800; }
+.score-chip.status { background: rgba(237,118,27,.12); color: #b45309; }
+.score-chip.delta.up { background: rgba(77,163,145,.14); color: #256b5d; }
+.score-chip.delta.down { background: rgba(224,82,82,.14); color: #a33434; }
+.score-chip.delta.equal { background: rgba(0,148,217,.12); color: #03699a; }
+.score-description { color: var(--muted); line-height: 1.65; font-size: .94rem; margin: 0; }
+.score-scale-legend { display:flex; justify-content:space-between; gap: 8px; color: var(--muted); font-size: .78rem; margin-top: 6px; }
+@media (max-width: 980px) { .score-grid-detailed { grid-template-columns: 1fr; } }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM FRAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/crm.css" />
+</head>
+<body>
+  <main class="crm-shell">
+    <aside class="crm-sidebar">
+      <a href="/" class="crm-brand">
+        <img src="/assets/logo_icon.png" alt="FRAME" />
+        <div>
+          <strong>FRAME CRM</strong>
+          <span>Pipeline de diagnósticos</span>
+        </div>
+      </a>
+      <nav class="crm-nav">
+        <a href="/diagnostico" target="_blank" rel="noreferrer">Abrir diagnóstico</a>
+        <a href="/" target="_blank" rel="noreferrer">Ver landing</a>
+        <button id="logoutBtn" type="button">Sair</button>
+      </nav>
+      <small>Gestão comercial dos leads capturados pelo diagnóstico FRAME. A listagem agrupa leads com o mesmo e-mail e mostra o volume total de diagnósticos enviados.</small>
+    </aside>
+    <section class="crm-main">
+      <header class="topbar">
+        <div>
+          <h1>CRM FRAME</h1>
+          <p id="crmWelcome">Carregando usuário…</p>
+        </div>
+        <div class="topbar-actions">
+          <input id="searchInput" class="search" placeholder="Buscar por nome, empresa, e-mail, objetivo…" />
+          <button id="refreshBtn" class="btn btn-ghost" type="button">Atualizar</button>
+          <button id="logoutTopBtn" class="btn btn-ghost" type="button">Sair</button>
+        </div>
+      </header>
+
+      <section class="stats-grid" id="statsGrid"></section>
+
+      <section class="content-grid single-column">
+        <article class="panel">
+          <h2>Leads capturados</h2>
+          <div class="table-wrap">
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Lead</th>
+                  <th>Último diagnóstico</th>
+                  <th>Score</th>
+                  <th>Etapa</th>
+                  <th>Qtd. diagnósticos</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <div class="crm-modal" id="crmModal" aria-hidden="true">
+    <div class="crm-modal-backdrop" data-close-modal></div>
+    <div class="crm-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="crmModalTitle">
+      <button class="crm-modal-close" id="crmModalClose" type="button" aria-label="Fechar">×</button>
+      <div class="crm-modal-head">
+        <h3 id="crmModalTitle">Detalhes</h3>
+      </div>
+      <div class="crm-modal-body" id="crmModalBody"></div>
+    </div>
+  </div>
+  <script src="/crm-frame.js"></script>
+</body>
+</html>
