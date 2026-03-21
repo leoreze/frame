@@ -1,71 +1,3 @@
-const METHOD_META = {
-  foco: {
-    title: 'Foco',
-    short: 'Tese, objetivo e decisão esperada.',
-    description: 'Mede o quanto a apresentação deixa claro o objetivo central, a prioridade da mensagem e a ação esperada do público.',
-    average: 74
-  },
-  roteiro: {
-    title: 'Roteiro',
-    short: 'Fluxo narrativo e progressão lógica.',
-    description: 'Avalia se a história avança com lógica, encadeamento e ritmo, conduzindo o público do contexto até a conclusão.',
-    average: 71
-  },
-  arquitetura: {
-    title: 'Arquitetura',
-    short: 'Estrutura, hierarquia e escaneabilidade.',
-    description: 'Analisa como o conteúdo foi organizado nos slides, a hierarquia visual e a facilidade de leitura e entendimento rápido.',
-    average: 69
-  },
-  mensagem: {
-    title: 'Mensagem',
-    short: 'Força de argumento e persuasão.',
-    description: 'Observa clareza, objetividade e impacto do discurso para sustentar valor, credibilidade e convencimento.',
-    average: 73
-  },
-  estetica: {
-    title: 'Estética',
-    short: 'Acabamento visual e percepção de valor.',
-    description: 'Mede consistência visual, profissionalismo, harmonia e se o design reforça a confiança na apresentação.',
-    average: 76
-  }
-};
-
-function clampScore(value) {
-  const numeric = Number(value || 0);
-  return Math.max(0, Math.min(100, Math.round(numeric)));
-}
-
-function getScoreLabel(score) {
-  if (score <= 19) return 'Péssimo';
-  if (score <= 39) return 'Ruim';
-  if (score <= 59) return 'Razoável';
-  if (score <= 74) return 'Bom';
-  if (score <= 89) return 'Ótimo';
-  return 'Super';
-}
-
-function getScoreDelta(score, average) {
-  const diff = clampScore(score) - clampScore(average);
-  if (Math.abs(diff) <= 2) return { label: 'Na média do método', className: 'equal' };
-  if (diff > 0) return { label: `${diff} pts acima da média`, className: 'up' };
-  return { label: `${Math.abs(diff)} pts abaixo da média`, className: 'down' };
-}
-
-function getMetricDescription(key, score) {
-  const label = getScoreLabel(score);
-  const base = METHOD_META[key]?.description || '';
-  const variations = {
-    'Péssimo': 'Hoje esta dimensão está criticamente comprometida e tende a prejudicar diretamente a compreensão e a decisão.',
-    'Ruim': 'Há fragilidade evidente aqui, com sinais claros de ruído, perda de clareza ou baixa força na leitura.',
-    'Razoável': 'Existe base mínima funcional, mas ainda falta consistência para transmitir segurança e alto impacto.',
-    'Bom': 'O desempenho já sustenta a apresentação, embora ainda haja espaço para refinar clareza, síntese e acabamento.',
-    'Ótimo': 'Esta dimensão está madura e bem resolvida, reforçando a percepção de qualidade e condução estratégica.',
-    'Super': 'Este é um ponto de destaque da apresentação, acima da média e com forte potencial de gerar confiança e impacto.'
-  };
-  return `${base} ${variations[label]}`.trim();
-}
-
 const stepMount = document.getElementById('stepMount');
 const progressBar = document.getElementById('progressBar');
 const stepCounter = document.getElementById('stepCounter');
@@ -75,6 +7,14 @@ const submitBtn = document.getElementById('submitBtn');
 const form = document.getElementById('diagnosticForm');
 const loadingState = document.getElementById('loadingState');
 const resultState = document.getElementById('resultState');
+const loadingPercentEl = document.getElementById('loadingPercent');
+const loadingEtaEl = document.getElementById('loadingEta');
+const loadingStatusTextEl = document.getElementById('loadingStatusText');
+const loadingProgressBarEl = document.getElementById('loadingProgressBar');
+const loadingChecklistEl = document.getElementById('loadingChecklist');
+
+let loadingTimer = null;
+let loadingStartAt = 0;
 
 const state = {
   step: 0,
@@ -375,6 +315,7 @@ form.addEventListener('submit', async (event) => {
 
   form.classList.add('hidden');
   loadingState.classList.remove('hidden');
+  startLoadingSimulation();
 
   try {
     const response = await fetch('/api/diagnostics', {
@@ -389,53 +330,95 @@ form.addEventListener('submit', async (event) => {
 
     if (payload.warning) console.warn(payload.warning);
     populateResult(payload.diagnostic);
-    loadingState.classList.add('hidden');
-    resultState.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    stopLoadingSimulation(100);
+    window.setTimeout(() => {
+      loadingState.classList.add('hidden');
+      resultState.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 350);
   } catch (error) {
+    stopLoadingSimulation(0);
     loadingState.classList.add('hidden');
     form.classList.remove('hidden');
     alert(error.message || 'Erro ao gerar diagnóstico.');
   }
 });
 
+
+function startLoadingSimulation() {
+  stopLoadingSimulation();
+  loadingStartAt = Date.now();
+
+  const update = () => {
+    const elapsed = Math.floor((Date.now() - loadingStartAt) / 1000);
+    let percent = 0;
+
+    if (elapsed <= 8) percent = elapsed * 5;
+    else if (elapsed <= 18) percent = 40 + (elapsed - 8) * 3;
+    else if (elapsed <= 30) percent = 70 + (elapsed - 18) * 1.5;
+    else percent = 88 + Math.min((elapsed - 30) * 0.5, 8);
+
+    percent = Math.max(3, Math.min(96, Math.round(percent)));
+    updateLoadingUi(percent);
+  };
+
+  update();
+  loadingTimer = window.setInterval(update, 1000);
+}
+
+function stopLoadingSimulation(finalPercent = 100) {
+  if (loadingTimer) {
+    window.clearInterval(loadingTimer);
+    loadingTimer = null;
+  }
+  updateLoadingUi(finalPercent);
+}
+
+function updateLoadingUi(percent) {
+  const stages = [
+    { threshold: 12, text: 'Recebendo briefing e arquivo enviado…' },
+    { threshold: 34, text: 'Lendo contexto, objetivo e público da apresentação…' },
+    { threshold: 62, text: 'Pontuando Foco, Roteiro, Arquitetura, Mensagem e Estética…' },
+    { threshold: 84, text: 'Consolidando leituras, recomendações e score final…' },
+    { threshold: 100, text: 'Diagnóstico pronto. Preparando exibição do resultado…' },
+  ];
+
+  const totalEstimate = 45;
+  const elapsed = Math.floor((Date.now() - loadingStartAt) / 1000);
+  const remaining = percent >= 100 ? 0 : Math.max(3, totalEstimate - elapsed);
+  const foundIndex = stages.findIndex((stage) => percent <= stage.threshold);
+  const currentIndex = foundIndex === -1 ? stages.length - 1 : foundIndex;
+  const currentStage = stages[currentIndex];
+
+  if (loadingPercentEl) loadingPercentEl.textContent = `${percent}%`;
+  if (loadingEtaEl) loadingEtaEl.textContent = remaining === 0 ? 'concluído' : `~ ${remaining}s`;
+  if (loadingStatusTextEl) loadingStatusTextEl.textContent = currentStage.text;
+  if (loadingProgressBarEl) loadingProgressBarEl.style.width = `${percent}%`;
+
+  if (loadingChecklistEl) {
+    [...loadingChecklistEl.children].forEach((item, index) => {
+      item.classList.remove('active', 'done');
+      if (percent >= 100 || index < currentIndex) item.classList.add('done');
+      else if (index === currentIndex) item.classList.add('active');
+    });
+  }
+}
+
 function populateResult(diagnostic) {
   document.getElementById('resultHeadline').textContent = diagnostic.headline;
   document.getElementById('resultSummary').textContent = diagnostic.summary;
-  document.getElementById('resultOverallScore').textContent = `${clampScore(diagnostic.score_overall)}/100`; 
+  document.getElementById('resultOverallScore').textContent = Math.round(diagnostic.score_overall);
   document.getElementById('resultRisk').textContent = diagnostic.main_risk;
   document.getElementById('resultStrength').textContent = diagnostic.strength;
   document.getElementById('resultCommercialHook').textContent = diagnostic.commercial_hook;
 
   const scoreGrid = document.getElementById('scoreGrid');
-  scoreGrid.innerHTML = Object.entries(diagnostic.scores).map(([label, score]) => {
-    const metric = METHOD_META[label] || { title: capitalize(label), short: '', average: 70, description: '' };
-    const normalizedScore = clampScore(score);
-    const statusLabel = getScoreLabel(normalizedScore);
-    const delta = getScoreDelta(normalizedScore, metric.average);
-    const detailedDescription = getMetricDescription(label, normalizedScore);
-    return `
-      <article class="score-card">
-        <div class="score-card-top">
-          <div class="score-card-title">
-            <strong>${metric.title}</strong>
-            <span>${metric.short}</span>
-          </div>
-          <div class="score-card-score">
-            <b>${normalizedScore}</b>
-            <span>/100</span>
-          </div>
-        </div>
-        <div class="score-scale" aria-label="Escala de 0 a 100"><span style="width:${normalizedScore}%"></span></div>
-        <div class="score-scale-legend"><span>0</span><span>100</span></div>
-        <div class="score-meta-row">
-          <span class="score-chip status">${statusLabel}</span>
-          <span class="score-chip delta ${delta.className}">${delta.label}</span>
-        </div>
-        <p class="score-description">${escapeHtml(detailedDescription)}</p>
-      </article>
-    `;
-  }).join('');
+  scoreGrid.innerHTML = Object.entries(diagnostic.scores).map(([label, score]) => `
+    <article class="score-card">
+      <b>${Math.round(score)}</b>
+      <span>${capitalize(label)}</span>
+    </article>
+  `).join('');
 
   document.getElementById('resultFindings').innerHTML = diagnostic.findings.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   document.getElementById('resultRecommendations').innerHTML = diagnostic.recommendations.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
@@ -533,12 +516,7 @@ function downloadDiagnosticPdf(diagnostic) {
 
   addWrapped('Scores FRAME', 15, 'bold', [237,118,27], 10);
   Object.entries(diagnostic.scores || {}).forEach(([label, score]) => {
-    const metric = METHOD_META[label] || { title: capitalize(label), average: 70 };
-    const normalizedScore = clampScore(score);
-    const statusLabel = getScoreLabel(normalizedScore);
-    const delta = getScoreDelta(normalizedScore, metric.average);
-    addWrapped(`${metric.title}: ${normalizedScore}/100 • ${statusLabel} • ${delta.label}`, 11, 'normal', [36,31,28], 6);
-    addWrapped(getMetricDescription(label, normalizedScore), 10, 'normal', [103,95,89], 8);
+    addWrapped(`${capitalize(label)}: ${Math.round(score)}/100`, 11, 'normal', [36,31,28], 6);
   });
   y += 8;
 
