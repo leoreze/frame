@@ -28,11 +28,11 @@ export const crmSessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   rolling: true,
-  proxy: isProd,
+  proxy: true,
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: isProd,
+    secure: 'auto',
     maxAge: 1000 * 60 * 60,
   },
 });
@@ -249,7 +249,8 @@ router.get('/api/crm/me', (req, res) => {
   return res.json({ success: true, user: req.session.crmUser });
 });
 
-router.get('/crm-frame/login', (_req, res) => {
+router.get('/crm-frame/login', (req, res) => {
+  if (req.session?.crmUser) return res.redirect('/crm-frame');
   res.sendFile(path.join(publicDir, 'crm-login.html'));
 });
 

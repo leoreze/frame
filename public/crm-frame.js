@@ -296,6 +296,7 @@ async function updateLeadStage(leadId) {
   button.textContent = 'Salvando...';
   try {
     const response = await fetch(`/api/crm/leads/${leadId}/stage`, {
+      credentials: 'include',
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ stage, owner, note })
@@ -356,7 +357,7 @@ function bindModalInnerActions() {
 }
 
 async function loadSession() {
-  const response = await fetch('/api/crm/me');
+  const response = await fetch('/api/crm/me', { credentials: 'include', cache: 'no-store' });
   if (!response.ok) {
     window.location.href = '/crm-frame/login';
     return false;
@@ -367,7 +368,7 @@ async function loadSession() {
 }
 
 async function loadCrmData() {
-  const response = await fetch('/api/crm/leads');
+  const response = await fetch('/api/crm/leads', { credentials: 'include', cache: 'no-store' });
   const payload = await response.json();
   if (!response.ok || !payload.success) {
     if (response.status === 401) {
@@ -383,7 +384,7 @@ async function loadCrmData() {
 }
 
 async function logout() {
-  await fetch('/api/crm/logout', { method: 'POST' });
+  await fetch('/api/crm/logout', { method: 'POST', credentials: 'include' });
   window.location.href = '/crm-frame/login';
 }
 

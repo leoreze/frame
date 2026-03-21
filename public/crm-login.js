@@ -13,13 +13,18 @@ form?.addEventListener('submit', async (event) => {
     const response = await fetch('/api/crm/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
 
     const data = await response.json();
     if (!response.ok || !data.success) throw new Error(data.error || 'Falha ao autenticar.');
-    window.location.href = '/crm-frame';
+
+    try {
+      await fetch('/api/crm/me', { credentials: 'include', cache: 'no-store' });
+    } catch {}
+
+    window.location.assign('/crm-frame');
   } catch (error) {
     errorBox.textContent = error.message || 'Falha ao autenticar.';
     errorBox.classList.remove('hidden');
