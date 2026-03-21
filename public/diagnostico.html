@@ -27,12 +27,33 @@
         <p>Responda em poucos passos. No final, você recebe um diagnóstico inicial gratuito com score por dimensão e pode baixar o resumo em PDF.</p>
       </div>
 
-      <div class="method-list">
-        <article><b>F</b><span>Foco</span></article>
-        <article><b>R</b><span>Roteiro</span></article>
-        <article><b>A</b><span>Arquitetura</span></article>
-        <article><b>M</b><span>Mensagem</span></article>
-        <article><b>E</b><span>Estética</span></article>
+      <div class="method-panel">
+        <div class="method-panel-head">
+          <strong>Como o método FRAME lê sua apresentação</strong>
+          <span>Toque em cada dimensão para entender a análise</span>
+        </div>
+        <div class="method-accordion" id="methodAccordion">
+          <details open>
+            <summary><b>F</b><span>Foco</span></summary>
+            <p>Verifica se a apresentação deixa claro qual é a tese principal, para quem ela foi construída e que decisão precisa acontecer ao final.</p>
+          </details>
+          <details>
+            <summary><b>R</b><span>Roteiro</span></summary>
+            <p>Avalia a progressão lógica da narrativa, a ordem dos blocos e se o público é conduzido de contexto até conclusão sem se perder.</p>
+          </details>
+          <details>
+            <summary><b>A</b><span>Arquitetura</span></summary>
+            <p>Analisa a estrutura dos slides, a hierarquia da informação, a distribuição visual e a facilidade de leitura e escaneabilidade.</p>
+          </details>
+          <details>
+            <summary><b>M</b><span>Mensagem</span></summary>
+            <p>Mede a força da comunicação, a clareza dos argumentos, o peso da proposta de valor e o poder de persuasão do material.</p>
+          </details>
+          <details>
+            <summary><b>E</b><span>Estética</span></summary>
+            <p>Observa consistência visual, acabamento, percepção de profissionalismo e o quanto o design reforça — ou atrapalha — a mensagem.</p>
+          </details>
+        </div>
       </div>
     </aside>
 
@@ -84,7 +105,7 @@
           </div>
         </div>
 
-        <div id="scoreGrid" class="score-grid"></div>
+        <div id="scoreGrid" class="score-grid score-grid-detailed"></div>
 
         <div class="result-columns">
           <article>
